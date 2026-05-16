@@ -3,11 +3,12 @@ services:
     runtime: python
     name: lab09-ex91-flask-api
     plan: free
+    region: oregon
     rootDir: exercicio_9_1_flask
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
     healthCheckPath: /api/health
-    autoDeployTrigger: off
+    autoDeployTrigger: checksPass
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.4
@@ -16,11 +17,12 @@ services:
     runtime: python
     name: lab09-ex92-fastapi-api
     plan: free
+    region: oregon
     rootDir: exercicio_9_2_fastapi
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
-    autoDeployTrigger: off
+    autoDeployTrigger: checksPass
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.4
@@ -29,11 +31,12 @@ services:
     runtime: python
     name: lab09-ex93-flask-hello
     plan: free
+    region: oregon
     rootDir: exercicio_9_3_render_hello_flask
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
     healthCheckPath: /api/health
-    autoDeployTrigger: off
+    autoDeployTrigger: checksPass
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.4
@@ -42,11 +45,12 @@ services:
     runtime: python
     name: lab09-ex94-flask-restful
     plan: free
+    region: oregon
     rootDir: exercicio_9_4_render_flask_restful
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
     healthCheckPath: /api/health
-    autoDeployTrigger: off
+    autoDeployTrigger: checksPass
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.4

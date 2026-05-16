@@ -1,6 +1,16 @@
 name: Infra - Validate Render Blueprint
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - render.yaml
+      - .github/workflows/infra-validate-render.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - render.yaml
+      - .github/workflows/infra-validate-render.yml
   workflow_dispatch:
 
 jobs:
@@ -23,10 +33,15 @@ jobs:
             exit 1
           fi
 
+          echo "Validating render.yaml against Render workspace ${RENDER_OWNER_ID}"
+
           curl -fsS \
             --request POST \
             --url "https://api.render.com/v1/blueprints/validate" \
             --header "Authorization: Bearer ${RENDER_API_KEY}" \
             --header "Accept: application/json" \
             --form "ownerId=${RENDER_OWNER_ID}" \
-            --form "file=@render.yaml"
+            --form "file=@render.yaml" \
+            --output blueprint-validation.json
+
+          python -m json.tool blueprint-validation.json

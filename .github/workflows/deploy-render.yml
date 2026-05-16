@@ -1,4 +1,4 @@
-name: CD - Deploy to Render
+name: CD - Render Blueprint Auto Deploy
 
 on:
   workflow_run:
@@ -7,50 +7,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Trigger Render deploys
+  explain-blueprint-deploy:
+    name: Confirm Render Blueprint deployment flow
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      - name: Trigger deploys through Render API
-        env:
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-          EX91_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID_EX91_FLASK }}
-          EX92_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID_EX92_FASTAPI }}
-          EX93_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID_EX93_HELLO_FLASK }}
-          EX94_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID_EX94_FLASK_RESTFUL }}
+      - name: Explain deployment
         run: |
-          set -euo pipefail
+          cat <<'MSG'
+          CI passed.
 
-          if [ -z "${RENDER_API_KEY:-}" ]; then
-            echo "::error::Missing GitHub secret RENDER_API_KEY"
-            exit 1
-          fi
+          Deploy is managed by Render Blueprint using render.yaml.
+          Each service has:
+            autoDeployTrigger: checksPass
 
-          trigger_deploy() {
-            local service_name="$1"
-            local service_id="$2"
+          Therefore, after this GitHub check passes, Render will deploy the Blueprint-managed services automatically.
 
-            if [ -z "${service_id:-}" ]; then
-              echo "::warning::Skipping ${service_name}: service id secret is empty"
-              return 0
-            fi
-
-            echo "Triggering deploy for ${service_name} (${service_id})"
-
-            curl -fsS \
-              --request POST \
-              --url "https://api.render.com/v1/services/${service_id}/deploys" \
-              --header "Authorization: Bearer ${RENDER_API_KEY}" \
-              --header "Accept: application/json" \
-              --header "Content-Type: application/json" \
-              --data '{"clearCache":"do_not_clear"}'
-
-            echo ""
-          }
-
-          trigger_deploy "Exercicio 9.1 - Flask" "$EX91_SERVICE_ID"
-          trigger_deploy "Exercicio 9.2 - FastAPI" "$EX92_SERVICE_ID"
-          trigger_deploy "Exercicio 9.3 - Flask Hello" "$EX93_SERVICE_ID"
-          trigger_deploy "Exercicio 9.4 - Flask RESTful" "$EX94_SERVICE_ID"
+          For initial setup, create the Blueprint once in Render:
+            New + > Blueprint > select repo > render.yaml > Deploy Blueprint
+          MSG

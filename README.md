@@ -1,167 +1,84 @@
-# Lab 09 - APIs e Microsserviços no Render gratuito
+# Lab 09 — APIs e Microsserviços com Render Blueprint
 
-Este projeto substitui o fluxo de Azure por Render, mantendo os exercícios do laboratório:
+Este projeto resolve os exercícios do Laboratório 9 usando **Flask**, **FastAPI**, **Postman**, **GitHub Actions** e **Render Free**.
 
-- **9.1:** Flask Hello World + API RESTful.
-- **9.2:** API RESTful com FastAPI + Uvicorn.
-- **9.3:** Flask Hello World publicado no Render.
-- **9.4:** API RESTful Flask publicada no Render.
+A implantação em nuvem foi adaptada para **Render Blueprint**, usando o arquivo `render.yaml` na raiz do repositório.
 
-A estrutura também inclui:
-
-- `render.yaml` para infraestrutura como código no Render.
-- GitHub Actions para CI e CD.
-- Script de bootstrap que cria os serviços no Render e configura automaticamente os secrets no GitHub usando `gh`.
-- Coleção Postman pronta.
-
----
-
-## 1. Pré-requisitos
-
-Instale:
-
-- Python 3.12+
-- Git
-- GitHub CLI (`gh`)
-- Conta no Render
-- Render API Key
-
-Faça login no GitHub CLI:
-
-```bash
-gh auth login
-```
-
----
-
-## 2. Criar e subir o repositório no GitHub
-
-Dentro da pasta do projeto:
-
-```bash
-git init
-git add .
-git commit -m "Lab 09 Render"
-git branch -M main
-gh repo create lab09-render-apis --public --source=. --remote=origin --push
-```
-
-Se preferir privado:
-
-```bash
-gh repo create lab09-render-apis --private --source=. --remote=origin --push
-```
-
----
-
-## 3. Rodar localmente
-
-### Exercício 9.1 - Flask
-
-```bash
-cd exercicio_9_1_flask
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python app.py
-```
-
-No Windows PowerShell:
-
-```powershell
-cd exercicio_9_1_flask
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python app.py
-```
-
-Acesse:
+## Estrutura
 
 ```text
-http://127.0.0.1:5000/
-http://127.0.0.1:5000/api/tasks
+.
+├── exercicio_9_1_flask/
+├── exercicio_9_2_fastapi/
+├── exercicio_9_3_render_hello_flask/
+├── exercicio_9_4_render_flask_restful/
+├── .github/workflows/
+├── postman/
+├── scripts/
+└── render.yaml
 ```
 
-### Exercício 9.2 - FastAPI
+## Deploy correto no Render
+
+O fluxo correto agora é:
+
+1. Rodar o script de bootstrap.
+2. O script valida o `render.yaml` na API do Render.
+3. O script configura secrets no GitHub usando `gh secret set`.
+4. O script faz commit/push para o GitHub.
+5. Você cria o Blueprint uma única vez no Render Dashboard.
+6. Depois disso, cada push na branch principal dispara CI/CD automaticamente.
+
+## Comando principal
+
+Na raiz do projeto:
 
 ```bash
-cd exercicio_9_2_fastapi
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload
+chmod +x scripts/*.sh
+./scripts/bootstrap_render_blueprint.sh
 ```
 
-No Windows PowerShell:
-
-```powershell
-cd exercicio_9_2_fastapi
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-
-Acesse:
-
-```text
-http://127.0.0.1:8000/
-http://127.0.0.1:8000/docs
-http://127.0.0.1:8000/api/tasks
-```
-
----
-
-## 4. Criar infra no Render e configurar secrets automaticamente
-
-Exporte sua Render API Key:
-
-```bash
-export RENDER_API_KEY="sua_render_api_key"
-```
-
-No Windows PowerShell:
-
-```powershell
-$env:RENDER_API_KEY="sua_render_api_key"
-```
-
-Rode o bootstrap:
+O comando antigo também funciona e redireciona para o novo fluxo:
 
 ```bash
 ./scripts/bootstrap_render_infra.sh
 ```
 
-Esse script faz o seguinte:
+## Variáveis aceitas pelo script
 
-1. Confirma que você está logado no GitHub CLI.
-2. Busca seus workspaces no Render.
-3. Cria quatro Web Services no Render:
-   - `lab09-ex91-flask-api`
-   - `lab09-ex92-fastapi-api`
-   - `lab09-ex93-flask-hello`
-   - `lab09-ex94-flask-restful`
-4. Dispara o deploy inicial.
-5. Salva os IDs dos serviços em `.render/services.env`.
-6. Configura automaticamente estes secrets no GitHub:
-   - `RENDER_API_KEY`
-   - `RENDER_OWNER_ID`
-   - `RENDER_SERVICE_ID_EX91_FLASK`
-   - `RENDER_SERVICE_ID_EX92_FASTAPI`
-   - `RENDER_SERVICE_ID_EX93_HELLO_FLASK`
-   - `RENDER_SERVICE_ID_EX94_FLASK_RESTFUL`
-
-Se os nomes já existirem no Render, use um prefixo:
+Você pode informar no terminal quando o script pedir, ou exportar antes:
 
 ```bash
-export SERVICE_PREFIX="gabriel"
-./scripts/bootstrap_render_infra.sh
+export RENDER_API_KEY="sua_api_key_do_render"
+export RENDER_OWNER_ID="seu_workspace_id_do_render"
 ```
 
----
+## O que o script mostra
 
-## 5. CI/CD
+O script agora é verboso e mostra:
+
+- diretório do projeto;
+- arquivo de log criado em `.render/`;
+- checagem de `git`, `gh`, `curl` e `python3`;
+- status de autenticação do GitHub CLI;
+- lista de workspaces/owners encontrados no Render;
+- validação do `render.yaml`;
+- criação/atualização de secrets no GitHub;
+- commit e push;
+- instruções para criar o Blueprint no Render;
+- tentativa de descobrir Blueprint e serviços criados.
+
+## Por que ainda existe uma etapa manual no Render?
+
+O Render Blueprint precisa ser conectado ao repositório pela primeira vez no Dashboard:
+
+```text
+Render Dashboard > New + > Blueprint > selecionar repositório > render.yaml > Deploy Blueprint
+```
+
+Depois dessa criação inicial, o Blueprint fica conectado ao repositório e o deploy passa a ser automático.
+
+## CI/CD
 
 ### CI
 
@@ -171,19 +88,9 @@ Arquivo:
 .github/workflows/ci.yml
 ```
 
-Esse workflow roda `pytest` em todos os exercícios quando houver push ou pull request para `main`.
+Roda os testes de todos os exercícios.
 
-### CD
-
-Arquivo:
-
-```text
-.github/workflows/deploy-render.yml
-```
-
-Esse workflow só dispara deploy no Render depois que o CI passa. Ele chama a API do Render para cada serviço.
-
-### Validação do Blueprint
+### Validação de infraestrutura
 
 Arquivo:
 
@@ -191,132 +98,46 @@ Arquivo:
 .github/workflows/infra-validate-render.yml
 ```
 
-Esse workflow valida o `render.yaml` usando a API de validação do Render.
+Valida o `render.yaml` pela API do Render.
 
----
+### Deploy
 
-## 6. Comandos de produção no Render
+O deploy é controlado pelo próprio Render Blueprint porque cada serviço no `render.yaml` usa:
 
-### Flask
-
-Build Command:
-
-```bash
-pip install -r requirements.txt
+```yaml
+autoDeployTrigger: checksPass
 ```
 
-Start Command:
+Isso significa que o Render só faz deploy quando os checks do GitHub passam.
+
+## Acompanhar status depois
+
+Depois de criar o Blueprint no Render, rode:
 
 ```bash
-gunicorn --bind 0.0.0.0:$PORT app:app
+./scripts/status_render_blueprint.sh
 ```
 
-### FastAPI
+Ele consulta a API do Render e salva respostas completas em:
 
-Build Command:
+```text
+.render/render_blueprints_last.json
+.render/render_services_last.json
+.render/render_resources.env
+```
+
+## Testes locais
 
 ```bash
-pip install -r requirements.txt
+./scripts/test_local_all.sh
 ```
 
-Start Command:
+## Postman
 
-```bash
-uvicorn main:app --host 0.0.0.0 --port $PORT
-```
-
----
-
-## 7. Testar com Postman
-
-Importe:
+Importe a coleção:
 
 ```text
 postman/Lab09_Render.postman_collection.json
 ```
 
-Ajuste as variáveis conforme as URLs reais geradas pelo Render:
-
-```text
-base_url_ex91
-base_url_ex92
-base_url_ex93
-base_url_ex94
-```
-
-Exemplo:
-
-```text
-https://lab09-ex94-flask-restful.onrender.com
-```
-
----
-
-## 8. Entregáveis
-
-### Exercício 9.1
-
-- Link do código no GitHub.
-- Print do PyCharm executando Flask.
-- Print do browser em `/api/tasks`.
-- Link ou arquivo da coleção Postman.
-
-### Exercício 9.2
-
-- Link do código no GitHub.
-- Print do PyCharm executando Uvicorn.
-- Print do browser em `/docs`.
-- Link ou arquivo da coleção Postman.
-
-### Exercício 9.3
-
-- Link do repositório GitHub.
-- Link da aplicação Flask Hello World online no Render.
-
-### Exercício 9.4
-
-- Link do código.
-- Link do repositório.
-- Link da API online no Render.
-- Link ou arquivo da coleção Postman.
-
----
-
-## 9. Endpoints principais
-
-### Flask RESTful
-
-```text
-GET    /api/health
-GET    /api/tasks
-GET    /api/tasks/1
-POST   /api/tasks
-PUT    /api/tasks/1
-DELETE /api/tasks/1
-```
-
-Body para POST:
-
-```json
-{
-  "title": "Nova tarefa",
-  "description": "Criada pelo Postman",
-  "done": false
-}
-```
-
-Body para PUT:
-
-```json
-{
-  "title": "Tarefa atualizada",
-  "description": "Atualizada pelo Postman",
-  "done": true
-}
-```
-
----
-
-## 10. Observação importante
-
-As APIs usam armazenamento em memória. Em cada restart/deploy do Render, a lista de tarefas volta ao estado inicial. Isso é suficiente para o laboratório, mas em um projeto real você usaria banco de dados.
+Depois ajuste as variáveis conforme as URLs geradas pelo Render.
