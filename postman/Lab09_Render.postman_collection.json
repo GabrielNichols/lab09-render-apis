@@ -1,0 +1,122 @@
+{
+  "info": {
+    "name": "Lab 09 - APIs e Microsservicos - Render",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url_ex91", "value": "http://127.0.0.1:5000" },
+    { "key": "base_url_ex92", "value": "http://127.0.0.1:8000" },
+    { "key": "base_url_ex93", "value": "https://lab09-ex93-flask-hello.onrender.com" },
+    { "key": "base_url_ex94", "value": "https://lab09-ex94-flask-restful.onrender.com" }
+  ],
+  "item": [
+    {
+      "name": "Exercicio 9.1 - Flask Local/Render",
+      "item": [
+        {
+          "name": "Health",
+          "request": { "method": "GET", "url": "{{base_url_ex91}}/api/health" }
+        },
+        {
+          "name": "Listar tarefas",
+          "request": { "method": "GET", "url": "{{base_url_ex91}}/api/tasks" }
+        },
+        {
+          "name": "Criar tarefa",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Nova tarefa via Postman\",\n  \"description\": \"Criada no exercicio 9.1\",\n  \"done\": false\n}"
+            },
+            "url": "{{base_url_ex91}}/api/tasks"
+          }
+        },
+        {
+          "name": "Atualizar tarefa",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Tarefa atualizada\",\n  \"description\": \"Atualizada pelo Postman\",\n  \"done\": true\n}"
+            },
+            "url": "{{base_url_ex91}}/api/tasks/1"
+          }
+        },
+        {
+          "name": "Remover tarefa",
+          "request": { "method": "DELETE", "url": "{{base_url_ex91}}/api/tasks/2" }
+        }
+      ]
+    },
+    {
+      "name": "Exercicio 9.2 - FastAPI",
+      "item": [
+        {
+          "name": "Docs Swagger",
+          "request": { "method": "GET", "url": "{{base_url_ex92}}/docs" }
+        },
+        {
+          "name": "Health",
+          "request": { "method": "GET", "url": "{{base_url_ex92}}/api/health" }
+        },
+        {
+          "name": "Listar tarefas",
+          "request": { "method": "GET", "url": "{{base_url_ex92}}/api/tasks" }
+        },
+        {
+          "name": "Criar tarefa",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Nova tarefa FastAPI\",\n  \"description\": \"Criada no exercicio 9.2\",\n  \"done\": false\n}"
+            },
+            "url": "{{base_url_ex92}}/api/tasks"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Exercicio 9.3 - Flask Hello no Render",
+      "item": [
+        {
+          "name": "Home online",
+          "request": { "method": "GET", "url": "{{base_url_ex93}}/" }
+        },
+        {
+          "name": "Health online",
+          "request": { "method": "GET", "url": "{{base_url_ex93}}/api/health" }
+        }
+      ]
+    },
+    {
+      "name": "Exercicio 9.4 - Flask RESTful no Render",
+      "item": [
+        {
+          "name": "Health online",
+          "request": { "method": "GET", "url": "{{base_url_ex94}}/api/health" }
+        },
+        {
+          "name": "Listar tarefas online",
+          "request": { "method": "GET", "url": "{{base_url_ex94}}/api/tasks" }
+        },
+        {
+          "name": "Criar tarefa online",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Nova tarefa online\",\n  \"description\": \"Criada no Render\",\n  \"done\": false\n}"
+            },
+            "url": "{{base_url_ex94}}/api/tasks"
+          }
+        }
+      ]
+    }
+  ]
+}

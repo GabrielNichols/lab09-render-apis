@@ -1,0 +1,30 @@
+[
+  {
+    "secret_name": "RENDER_SERVICE_ID_EX91_FLASK",
+    "name": "lab09-ex91-flask-api",
+    "root_dir": "exercicio_9_1_flask",
+    "start_command": "gunicorn --bind 0.0.0.0:$PORT app:app",
+    "health_check_path": "/api/health"
+  },
+  {
+    "secret_name": "RENDER_SERVICE_ID_EX92_FASTAPI",
+    "name": "lab09-ex92-fastapi-api",
+    "root_dir": "exercicio_9_2_fastapi",
+    "start_command": "uvicorn main:app --host 0.0.0.0 --port $PORT",
+    "health_check_path": "/api/health"
+  },
+  {
+    "secret_name": "RENDER_SERVICE_ID_EX93_HELLO_FLASK",
+    "name": "lab09-ex93-flask-hello",
+    "root_dir": "exercicio_9_3_render_hello_flask",
+    "start_command": "gunicorn --bind 0.0.0.0:$PORT app:app",
+    "health_check_path": "/api/health"
+  },
+  {
+    "secret_name": "RENDER_SERVICE_ID_EX94_FLASK_RESTFUL",
+    "name": "lab09-ex94-flask-restful",
+    "root_dir": "exercicio_9_4_render_flask_restful",
+    "start_command": "gunicorn --bind 0.0.0.0:$PORT app:app",
+    "health_check_path": "/api/health"
+  }
+]

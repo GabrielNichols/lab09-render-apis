@@ -1,0 +1,32 @@
+name: Infra - Validate Render Blueprint
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate-render-yaml:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate render.yaml with Render API
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_OWNER_ID: ${{ secrets.RENDER_OWNER_ID }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${RENDER_API_KEY:-}" ] || [ -z "${RENDER_OWNER_ID:-}" ]; then
+            echo "::error::Missing RENDER_API_KEY or RENDER_OWNER_ID secrets"
+            exit 1
+          fi
+
+          curl -fsS \
+            --request POST \
+            --url "https://api.render.com/v1/blueprints/validate" \
+            --header "Authorization: Bearer ${RENDER_API_KEY}" \
+            --header "Accept: application/json" \
+            --form "ownerId=${RENDER_OWNER_ID}" \
+            --form "file=@render.yaml"
