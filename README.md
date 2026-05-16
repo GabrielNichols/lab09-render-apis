@@ -1,143 +1,183 @@
-# Lab 09 — APIs e Microsserviços com Render Blueprint
+# Lab 09 - APIs e Microsservicos
 
-Este projeto resolve os exercícios do Laboratório 9 usando **Flask**, **FastAPI**, **Postman**, **GitHub Actions** e **Render Free**.
+Resolucao do Lab 09 de Engenharia de Software, com quatro exercicios de APIs em Flask/FastAPI, testes automatizados, colecao Postman, GitHub Actions e deploy no Render.
 
-A implantação em nuvem foi adaptada para **Render Blueprint**, usando o arquivo `render.yaml` na raiz do repositório.
+## Links publicados
+
+| Exercicio | Tecnologia | URL | Endpoints principais |
+| --- | --- | --- | --- |
+| 9.1 | Flask API REST | https://lab09-ex91-flask-api.onrender.com | `/`, `/api/health`, `/api/tasks` |
+| 9.2 | FastAPI API REST | https://lab09-ex92-fastapi-api.onrender.com | `/`, `/docs`, `/api/health`, `/api/tasks` |
+| 9.3 | Flask Hello World | https://lab09-ex93-flask-hello.onrender.com | `/`, `/api/health` |
+| 9.4 | Flask RESTful no Render | https://lab09-ex94-flask-restful.onrender.com | `/`, `/api/health`, `/api/tasks` |
 
 ## Estrutura
 
 ```text
 .
-├── exercicio_9_1_flask/
-├── exercicio_9_2_fastapi/
-├── exercicio_9_3_render_hello_flask/
-├── exercicio_9_4_render_flask_restful/
-├── .github/workflows/
-├── postman/
-├── scripts/
-└── render.yaml
+|-- exercicio_9_1_flask/
+|   |-- app.py
+|   |-- requirements.txt
+|   `-- test_app.py
+|-- exercicio_9_2_fastapi/
+|   |-- main.py
+|   |-- requirements.txt
+|   `-- test_main.py
+|-- exercicio_9_3_render_hello_flask/
+|   |-- app.py
+|   |-- requirements.txt
+|   `-- test_app.py
+|-- exercicio_9_4_render_flask_restful/
+|   |-- app.py
+|   |-- requirements.txt
+|   `-- test_app.py
+|-- .github/workflows/
+|   |-- ci.yml
+|   |-- deploy-render.yml
+|   `-- infra-validate-render.yml
+|-- postman/
+|   `-- Lab09_Render.postman_collection.json
+|-- scripts/
+|-- render.yaml
+`-- README.md
 ```
 
-## Deploy correto no Render
+## Entregaveis
 
-O fluxo correto agora é:
+1. Codigo-fonte dos exercicios:
+   - `exercicio_9_1_flask`: API REST em Flask com CRUD de tarefas.
+   - `exercicio_9_2_fastapi`: API REST em FastAPI com Swagger em `/docs`.
+   - `exercicio_9_3_render_hello_flask`: Hello World Flask publicado no Render.
+   - `exercicio_9_4_render_flask_restful`: API RESTful Flask publicada no Render.
 
-1. Rodar o script de bootstrap.
-2. O script valida o `render.yaml` na API do Render.
-3. O script configura secrets no GitHub usando `gh secret set`.
-4. O script faz commit/push para o GitHub.
-5. Você cria o Blueprint uma única vez no Render Dashboard.
-6. Depois disso, cada push na branch principal dispara CI/CD automaticamente.
+2. Deploy no Render:
+   - `render.yaml` com os quatro Web Services.
+   - URLs publicadas na tabela "Links publicados".
+   - Health checks em `/api/health`.
 
-## Comando principal
+3. Testes automatizados:
+   - Testes `pytest` em cada pasta de exercicio.
+   - Workflow `.github/workflows/ci.yml` executando a matriz dos quatro projetos.
 
-Na raiz do projeto:
+4. CI/CD e infraestrutura:
+   - `.github/workflows/infra-validate-render.yml` valida o `render.yaml` pela API do Render.
+   - `.github/workflows/deploy-render.yml` documenta o fluxo de deploy automatico pelo Render Blueprint.
+   - `autoDeployTrigger: checksPass` configurado nos servicos do Render.
+
+5. Postman:
+   - Colecao: `postman/Lab09_Render.postman_collection.json`.
+   - Variaveis ja configuradas com as URLs publicadas no Render.
+
+6. Scripts auxiliares:
+   - `scripts/test_local_all.sh`: instala dependencias e roda os testes locais.
+   - `scripts/bootstrap_render_blueprint.sh`: prepara/valida o Blueprint no Render.
+   - `scripts/status_render_blueprint.sh`: consulta status dos recursos no Render.
+
+7. Prints recomendadas para anexar:
+   - Quatro terminais locais rodando os exercicios 9.1, 9.2, 9.3 e 9.4.
+   - Paginas/JSON das quatro URLs publicadas.
+   - `/docs` do FastAPI no exercicio 9.2.
+   - Resultado dos endpoints no Postman.
+   - Aba Actions do GitHub com o workflow de CI.
+   - Dashboard do Render mostrando os quatro servicos ativos.
+
+## Como rodar localmente
+
+Use quatro terminais separados.
+
+Para abrir os quatro terminais automaticamente no Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/start_local_terminals.ps1
+```
+
+### Terminal 1 - Exercicio 9.1
+
+```powershell
+cd exercicio_9_1_flask
+python -m pip install -r requirements.txt
+$env:PORT = "5101"
+python app.py
+```
+
+URL local: http://127.0.0.1:5101
+
+### Terminal 2 - Exercicio 9.2
+
+```powershell
+cd exercicio_9_2_fastapi
+python -m pip install -r requirements.txt
+$env:PORT = "5102"
+python main.py
+```
+
+URL local: http://127.0.0.1:5102  
+Swagger: http://127.0.0.1:5102/docs
+
+### Terminal 3 - Exercicio 9.3
+
+```powershell
+cd exercicio_9_3_render_hello_flask
+python -m pip install -r requirements.txt
+$env:PORT = "5103"
+python app.py
+```
+
+URL local: http://127.0.0.1:5103
+
+### Terminal 4 - Exercicio 9.4
+
+```powershell
+cd exercicio_9_4_render_flask_restful
+python -m pip install -r requirements.txt
+$env:PORT = "5104"
+python app.py
+```
+
+URL local: http://127.0.0.1:5104
+
+## Testes locais
+
+Para rodar todos os testes:
 
 ```bash
-chmod +x scripts/*.sh
-./scripts/bootstrap_render_blueprint.sh
+./scripts/test_local_all.sh
 ```
 
-O comando antigo também funciona e redireciona para o novo fluxo:
+Ou por pasta:
 
-```bash
-./scripts/bootstrap_render_infra.sh
+```powershell
+cd exercicio_9_1_flask
+python -m pip install -r requirements.txt
+pytest -q
 ```
 
-## Variáveis aceitas pelo script
+Repita o mesmo padrao para os demais exercicios.
 
-Você pode informar no terminal quando o script pedir, ou exportar antes:
+## Deploy
 
-```bash
-export RENDER_API_KEY="sua_api_key_do_render"
-export RENDER_OWNER_ID="seu_workspace_id_do_render"
-```
+O deploy foi feito pelo Render usando o arquivo `render.yaml`. Cada servico usa plano gratuito, health check em `/api/health` e deploy automatico quando os checks do GitHub passam.
 
-## O que o script mostra
-
-O script agora é verboso e mostra:
-
-- diretório do projeto;
-- arquivo de log criado em `.render/`;
-- checagem de `git`, `gh`, `curl` e `python3`;
-- status de autenticação do GitHub CLI;
-- lista de workspaces/owners encontrados no Render;
-- validação do `render.yaml`;
-- criação/atualização de secrets no GitHub;
-- commit e push;
-- instruções para criar o Blueprint no Render;
-- tentativa de descobrir Blueprint e serviços criados.
-
-## Por que ainda existe uma etapa manual no Render?
-
-O Render Blueprint precisa ser conectado ao repositório pela primeira vez no Dashboard:
+Fluxo inicial do Blueprint:
 
 ```text
-Render Dashboard > New + > Blueprint > selecionar repositório > render.yaml > Deploy Blueprint
+Render Dashboard > New + > Blueprint > selecionar repositorio > render.yaml > Deploy Blueprint
 ```
 
-Depois dessa criação inicial, o Blueprint fica conectado ao repositório e o deploy passa a ser automático.
+Depois da criacao inicial, novos pushes na branch principal disparam o fluxo de CI/CD.
 
-## CI/CD
+## Status do Render
 
-### CI
-
-Arquivo:
-
-```text
-.github/workflows/ci.yml
-```
-
-Roda os testes de todos os exercícios.
-
-### Validação de infraestrutura
-
-Arquivo:
-
-```text
-.github/workflows/infra-validate-render.yml
-```
-
-Valida o `render.yaml` pela API do Render.
-
-### Deploy
-
-O deploy é controlado pelo próprio Render Blueprint porque cada serviço no `render.yaml` usa:
-
-```yaml
-autoDeployTrigger: checksPass
-```
-
-Isso significa que o Render só faz deploy quando os checks do GitHub passam.
-
-## Acompanhar status depois
-
-Depois de criar o Blueprint no Render, rode:
+Depois de configurar `RENDER_API_KEY` e `RENDER_OWNER_ID`, consulte o status com:
 
 ```bash
 ./scripts/status_render_blueprint.sh
 ```
 
-Ele consulta a API do Render e salva respostas completas em:
+O script salva os retornos em:
 
 ```text
 .render/render_blueprints_last.json
 .render/render_services_last.json
 .render/render_resources.env
 ```
-
-## Testes locais
-
-```bash
-./scripts/test_local_all.sh
-```
-
-## Postman
-
-Importe a coleção:
-
-```text
-postman/Lab09_Render.postman_collection.json
-```
-
-Depois ajuste as variáveis conforme as URLs geradas pelo Render.

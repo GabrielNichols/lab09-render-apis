@@ -4,8 +4,8 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "base_url_ex91", "value": "http://127.0.0.1:5000" },
-    { "key": "base_url_ex92", "value": "http://127.0.0.1:8000" },
+    { "key": "base_url_ex91", "value": "https://lab09-ex91-flask-api.onrender.com" },
+    { "key": "base_url_ex92", "value": "https://lab09-ex92-fastapi-api.onrender.com" },
     { "key": "base_url_ex93", "value": "https://lab09-ex93-flask-hello.onrender.com" },
     { "key": "base_url_ex94", "value": "https://lab09-ex94-flask-restful.onrender.com" }
   ],
